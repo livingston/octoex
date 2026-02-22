@@ -58,9 +58,19 @@
     el.textContent = css;
   }
 
-  function detectPrivateRepo() {
-    const isPrivate = !!document.querySelector(
-      '.octicon-lock, [data-testid="repo-title-component"] .Label:not(.Label--success)'
+  const PAGE_TYPES = PAGE_PATTERNS.map((p) => p.type).concat("global");
+
+  function applyPageClass(pageType) {
+    const root = document.documentElement;
+    for (const type of PAGE_TYPES) {
+      root.classList.toggle(`octoex-page-${type}`, type === pageType);
+    }
+  }
+
+  function detectPrivateRepo(pageType) {
+    const isRepoPage = ["repository", "code", "pull-requests", "issues", "actions"].includes(pageType);
+    const isPrivate = isRepoPage && !!document.querySelector(
+      '[data-testid="repo-title-component"] .octicon-lock, [data-testid="repo-title-component"] .Label:not(.Label--success)'
     );
     document.documentElement.classList.toggle("octoex-private-repo", isPrivate);
   }
@@ -68,8 +78,9 @@
   function applyStyles() {
     chrome.storage.sync.get(null, (settings) => {
       if (chrome.runtime.lastError) return;
-      detectPrivateRepo();
       const pageType = detectPageType();
+      applyPageClass(pageType);
+      detectPrivateRepo(pageType);
       const css = buildCSS(settings, pageType);
       injectStyles(css);
     });

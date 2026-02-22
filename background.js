@@ -1,7 +1,7 @@
 const DEFAULT_SETTINGS = {
   enabled: true,
   presets: {
-    "private-repo-header": { enabled: true, pages: ["repository", "code", "pull-requests", "issues", "actions"] },
+    "private-repo-accent": { enabled: true, pages: ["repository", "code", "pull-requests", "issues", "actions", "profile"] },
   },
   customCSS: {
     global: "",
