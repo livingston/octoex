@@ -1,0 +1,14 @@
+/* OctoEx base styles - intentionally minimal */
+@layer base {
+  @property --octoex-repo-accent {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: transparent;
+  }
+}
+
+.GlobalNav {
+  --octoex-repo-accent: transparent;
+  background-image: radial-gradient(ellipse at top, var(--octoex-repo-accent) 0%, hsla(0, 0%, 0%, 0) 50%) !important;
+  transition: --octoex-repo-accent 0.3s ease;
+}

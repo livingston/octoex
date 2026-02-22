@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="header">
+    <h1>OctoEx</h1>
+    <label class="toggle master-toggle">
+      <input type="checkbox" id="master-toggle">
+      <span class="toggle-slider"></span>
+    </label>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="presets">Presets</button>
+    <button class="tab" data-tab="custom-css">Custom CSS</button>
+  </div>
+
+  <div id="presets-panel" class="panel active">
+    <div id="presets-list"></div>
+  </div>
+
+  <div id="custom-css-panel" class="panel">
+    <div class="css-controls">
+      <label for="page-select">Page type:</label>
+      <select id="page-select">
+        <option value="global">Global (all pages)</option>
+        <option value="repository">Repository</option>
+        <option value="code">Code</option>
+        <option value="pull-requests">Pull Requests</option>
+        <option value="issues">Issues</option>
+        <option value="actions">Actions</option>
+        <option value="profile">Profile</option>
+      </select>
+    </div>
+    <textarea id="css-editor" placeholder="Enter custom CSS..." spellcheck="false"></textarea>
+    <div class="css-actions">
+      <button id="save-css" class="btn btn-primary">Save</button>
+      <span id="save-status"></span>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span id="page-type-indicator"></span>
+  </div>
+
+  <script src="../presets.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
