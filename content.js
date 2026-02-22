@@ -68,25 +68,26 @@
     }
   }
 
+  function parseVisibility(labelEl) {
+    if (!labelEl) return "";
+    const text = labelEl.textContent.trim().toLowerCase();
+    if (text.includes("private")) return "private";
+    if (text.includes("public")) return "public";
+    return "";
+  }
+
   function markOrgRepoVisibility(pageType) {
     if (pageType === "profile") {
       document.querySelectorAll('.org-repos.repo-list li').forEach((li) => {
-        const label = li.querySelector('.Label');
-        if (!label) return;
-        const text = label.textContent.trim().toLowerCase();
-        const visibility = text.includes('private') ? 'private' : text.includes('public') ? 'public' : '';
-        if (visibility) li.setAttribute('data-octoex-visibility', visibility);
+        const v = parseVisibility(li.querySelector('.Label'));
+        if (v) li.setAttribute('data-octoex-visibility', v);
       });
     }
     if (pageType === "org-repositories") {
       document.querySelectorAll('[data-listview-component="items-list"] > *').forEach((item) => {
         const container = item.querySelector('[data-listview-item-title-container="true"]');
-        if (!container) return;
-        const label = container.querySelector('[data-listview-item-visibility-label="true"]');
-        if (!label) return;
-        const text = label.textContent.trim().toLowerCase();
-        const visibility = text.includes('private') ? 'private' : text.includes('public') ? 'public' : '';
-        if (visibility) item.setAttribute('data-octoex-visibility', visibility);
+        const v = parseVisibility(container?.querySelector('[data-listview-item-visibility-label="true"]'));
+        if (v) item.setAttribute('data-octoex-visibility', v);
       });
     }
   }
@@ -100,12 +101,8 @@
     const titleComponent = document.querySelector('#repo-title-component, [data-testid="repo-title-component"]');
     let isPrivate = false;
     if (titleComponent) {
-      if (titleComponent.querySelector('.octicon-lock')) {
-        isPrivate = true;
-      } else {
-        const label = titleComponent.querySelector('.Label');
-        isPrivate = !!label && label.textContent.trim().toLowerCase().includes('private');
-      }
+      isPrivate = !!titleComponent.querySelector('.octicon-lock')
+        || parseVisibility(titleComponent.querySelector('.Label')) === "private";
     }
     document.documentElement.classList.toggle("octoex-private-repo", isPrivate);
   }
@@ -153,6 +150,8 @@
       lastPath = window.location.pathname;
       applyStyles();
     } else {
+      // Mark dynamically loaded/paginated org repo items; CSS rules already
+      // injected will match the new data-octoex-visibility attributes automatically.
       const pageType = detectPageType();
       if (pageType === "org-repositories" && document.querySelector('[data-listview-component="items-list"] > :not([data-octoex-visibility])')) {
         clearTimeout(markDebounce);

@@ -30,11 +30,11 @@ chrome.runtime.onInstalled.addListener((details) => {
         if (!merged.presets[id]) {
           merged.presets[id] = preset;
         } else if (preset.pages) {
-          const existing = new Set(merged.presets[id].pages || []);
+          const pageSet = new Set(merged.presets[id].pages || []);
           for (const page of preset.pages) {
-            existing.add(page);
+            pageSet.add(page);
           }
-          merged.presets[id].pages = [...existing];
+          merged.presets[id].pages = [...pageSet];
         }
       }
       for (const [page, css] of Object.entries(DEFAULT_SETTINGS.customCSS)) {

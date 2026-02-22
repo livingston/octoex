@@ -14,7 +14,7 @@ Adds a subtle gradient glow to the GitHub navigation header that changes color b
 
 The color transitions smoothly when navigating between repos using CSS `@property` animation.
 
-On the profile repositories listing page, each repo gets a similar gradient highlight so you can quickly distinguish private from public repos at a glance.
+On profile and organisation pages, each repo in the listing gets a similar gradient highlight so you can quickly distinguish private from public repos at a glance. This includes org profile pages and the `/orgs/*/repositories` tab, with support for paginated lists.
 
 ### Custom CSS
 
@@ -26,7 +26,8 @@ Write your own CSS scoped to specific GitHub page types:
 - **Pull Requests** -- PR pages
 - **Issues** -- issue pages
 - **Actions** -- workflow pages
-- **Profile** -- user profile pages
+- **Profile** -- user and org profile pages
+- **Org Repositories** -- org-scoped repo listings (`/orgs/*/repositories`)
 
 ### Page Type Detection
 
