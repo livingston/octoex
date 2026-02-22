@@ -7,6 +7,7 @@
     { type: "actions", pattern: /^\/[^/]+\/[^/]+\/actions/ },
     { type: "code", pattern: /^\/[^/]+\/[^/]+\/(blob|tree)\// },
     { type: "repository", pattern: /^\/[^/]+\/[^/]+\/?$/ },
+    { type: "org-repositories", pattern: /^\/orgs\/[^/]+\/repositories/ },
     { type: "profile", pattern: /^\/[^/]+\/?$/ },
   ];
 
@@ -67,6 +68,29 @@
     }
   }
 
+  function markOrgRepoVisibility(pageType) {
+    if (pageType === "profile") {
+      document.querySelectorAll('.org-repos.repo-list li').forEach((li) => {
+        const label = li.querySelector('.Label');
+        if (!label) return;
+        const text = label.textContent.trim().toLowerCase();
+        const visibility = text.includes('private') ? 'private' : text.includes('public') ? 'public' : '';
+        if (visibility) li.setAttribute('data-octoex-visibility', visibility);
+      });
+    }
+    if (pageType === "org-repositories") {
+      document.querySelectorAll('[data-listview-component="items-list"] > *').forEach((item) => {
+        const container = item.querySelector('[data-listview-item-title-container="true"]');
+        if (!container) return;
+        const label = container.querySelector('[data-listview-item-visibility-label="true"]');
+        if (!label) return;
+        const text = label.textContent.trim().toLowerCase();
+        const visibility = text.includes('private') ? 'private' : text.includes('public') ? 'public' : '';
+        if (visibility) item.setAttribute('data-octoex-visibility', visibility);
+      });
+    }
+  }
+
   function detectPrivateRepo(pageType) {
     const isRepoPage = ["repository", "code", "pull-requests", "issues", "actions"].includes(pageType);
     if (!isRepoPage) {
@@ -80,7 +104,7 @@
         isPrivate = true;
       } else {
         const label = titleComponent.querySelector('.Label');
-        isPrivate = !!label && label.textContent.trim().toLowerCase() === 'private';
+        isPrivate = !!label && label.textContent.trim().toLowerCase().includes('private');
       }
     }
     document.documentElement.classList.toggle("octoex-private-repo", isPrivate);
@@ -92,6 +116,7 @@
       const pageType = detectPageType();
       applyPageClass(pageType);
       detectPrivateRepo(pageType);
+      markOrgRepoVisibility(pageType);
       const css = buildCSS(settings, pageType);
       injectStyles(css);
     });
@@ -122,10 +147,20 @@
   // Detect SPA navigation via turbo
   let lastPath = window.location.pathname;
 
+  let markDebounce = null;
   const observer = new MutationObserver(() => {
     if (window.location.pathname !== lastPath) {
       lastPath = window.location.pathname;
       applyStyles();
+    } else {
+      const pageType = detectPageType();
+      if (pageType === "org-repositories" && document.querySelector('[data-listview-component="items-list"] > :not([data-octoex-visibility])')) {
+        clearTimeout(markDebounce);
+        markDebounce = setTimeout(() => markOrgRepoVisibility("org-repositories"), 100);
+      } else if (pageType === "profile" && document.querySelector('.org-repos.repo-list li:not([data-octoex-visibility])')) {
+        clearTimeout(markDebounce);
+        markDebounce = setTimeout(() => markOrgRepoVisibility("profile"), 100);
+      }
     }
   });
 

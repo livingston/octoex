@@ -13,10 +13,10 @@
   transition: --octoex-repo-accent 0.3s ease;
 }
 
-#user-repositories-list li {
+#user-repositories-list li,
+[data-octoex-visibility] {
   --octoex-repo-accent: transparent;
   background: radial-gradient(ellipse at 0 -60%, var(--octoex-repo-accent) 0%, transparent 50%) !important;
   transition: --octoex-repo-accent 0.3s ease;
   padding-left: var(--base-size-24, 24px) !important;
-
 }

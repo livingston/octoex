@@ -1,7 +1,7 @@
 const DEFAULT_SETTINGS = {
   enabled: true,
   presets: {
-    "private-repo-accent": { enabled: true, pages: ["repository", "code", "pull-requests", "issues", "actions", "profile"] },
+    "private-repo-accent": { enabled: true, pages: ["repository", "code", "pull-requests", "issues", "actions", "profile", "org-repositories"] },
   },
   customCSS: {
     global: "",
@@ -11,6 +11,7 @@ const DEFAULT_SETTINGS = {
     repository: "",
     actions: "",
     profile: "",
+    "org-repositories": "",
   },
 };
 
@@ -28,6 +29,12 @@ chrome.runtime.onInstalled.addListener((details) => {
       for (const [id, preset] of Object.entries(DEFAULT_SETTINGS.presets)) {
         if (!merged.presets[id]) {
           merged.presets[id] = preset;
+        } else if (preset.pages) {
+          const existing = new Set(merged.presets[id].pages || []);
+          for (const page of preset.pages) {
+            existing.add(page);
+          }
+          merged.presets[id].pages = [...existing];
         }
       }
       for (const [page, css] of Object.entries(DEFAULT_SETTINGS.customCSS)) {
