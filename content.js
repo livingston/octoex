@@ -69,9 +69,20 @@
 
   function detectPrivateRepo(pageType) {
     const isRepoPage = ["repository", "code", "pull-requests", "issues", "actions"].includes(pageType);
-    const isPrivate = isRepoPage && !!document.querySelector(
-      '[data-testid="repo-title-component"] .octicon-lock, [data-testid="repo-title-component"] .Label:not(.Label--success)'
-    );
+    if (!isRepoPage) {
+      document.documentElement.classList.remove("octoex-private-repo");
+      return;
+    }
+    const titleComponent = document.querySelector('#repo-title-component, [data-testid="repo-title-component"]');
+    let isPrivate = false;
+    if (titleComponent) {
+      if (titleComponent.querySelector('.octicon-lock')) {
+        isPrivate = true;
+      } else {
+        const label = titleComponent.querySelector('.Label');
+        isPrivate = !!label && label.textContent.trim().toLowerCase() === 'private';
+      }
+    }
     document.documentElement.classList.toggle("octoex-private-repo", isPrivate);
   }
 
